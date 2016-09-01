@@ -27,9 +27,86 @@
 <!-- ---------------------------------------------------------------------------- -->
 				<section>
 					<h1>Groovy Introduction</h1>
-					<p>A practical approach to groovy</p>
+					<p>What make me like Groovy</p>
 					<p>
 				</section>
+<!-- ---------------------------------------------------------------------------- -->
+				<section>
+					<h2>Run groovy as scripts</h2>
+					<p></p>
+					<pre><code class="shell" data-trim>
+$ groovy -e "println 'Hello, Groovy.'"
+$ groovy myScript.groovy
+
+# Faster using groovy server (JVM re-use)
+$ groovyclient -e "println 'Hello, GroovyServ.'"
+</code></pre>
+				</section>
+<!-- ---------------------------------------------------------------------------- -->
+				<section>
+					<h2>Run groovy in Intellij</h2>
+					<p>(even community edition)</p>
+<img src="assets\idea-new-file.png"/>
+<img src="assets\idea-file-run.png"/>
+				</section>
+<!-- ---------------------------------------------------------------------------- -->
+				<section>
+					<h2>Run groovy on the web</h2>
+					<p><a href="https://groovyconsole.appspot.com/">https://groovyconsole.appspot.com</a></p>
+<a href="https://groovyconsole.appspot.com/"><img src="assets\groovyconsole.appspot.png"/></a>
+				</section>
+<!-- ---------------------------------------------------------------------------- -->
+					<section>
+						<h2>Integrate Groovy classes into maven project</h2>
+						<p>Place groovy files in /src/main/groovy</p>
+<pre style="font-size: xx-small;"><code class="xml" data-trim>
+<properties>
+  <groovy-version>2.3.4</groovy-version>
+  <gmaven-version>1.3</gmaven-version>
+  <sonar.language>grvy</sonar.language>
+  <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
+</properties>
+</code></pre>
+
+<pre style="font-size: xx-small;"><code class="xml" data-trim>
+<plugin>
+  <groupId>org.codehaus.gmaven</groupId>
+  <artifactId>gmaven-plugin</artifactId>
+  <version>${gmaven-version}</version>
+  <executions>
+      <execution>
+          <goals>
+              <goal>generateStubs</goal>
+              <goal>compile</goal>
+              <goal>generateTestStubs</goal>
+              <goal>testCompile</goal>
+          </goals>
+          <configuration>
+              <providerSelection>1.7</providerSelection>
+          </configuration>
+      </execution>
+  </executions>
+  <dependencies>
+      <dependency>
+          <groupId>org.codehaus.gmaven.runtime</groupId>
+          <artifactId>gmaven-runtime-1.7</artifactId>
+          <version>1.3</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.codehaus.groovy</groupId>
+                  <artifactId>groovy-all</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-all</artifactId>
+          <version>${groovy-version}</version>
+      </dependency>
+  </dependencies>
+</plugin>
+</code></pre>
+					</section>
 <!-- ---------------------------------------------------------------------------- -->
 				<section>
 						<h2>Strings</h2>
@@ -74,7 +151,7 @@ new Person(map)
 					<section>
 							<h2>Collections</h2>
 							<p></p>
-							<pre><code class="groovy" data-trim>
+							<pre style="font-size: medium;"><code class="groovy" data-trim>
 assert [] instanceof ArrayList
 assert [1, 2] + [3, 4] == [1, 2, 3, 4]
 
@@ -110,7 +187,16 @@ def body = new File("file-name.txt").text
 //and same for write
 new File("file-name.txt").text = "this is a file body \n second line"
 
+new File('/path/to/file').eachLine('UTF-8') { println it }
 
+def myCsvFile = new File("/tmp/a.csv")
+myCsvFile.text = """author;age\nXavier;29\nLenny;7"""
+
+myCsvFile.splitEachLine(";", { f ->
+     println "${f[0]}-${f[1]}"
+})
+
+myCsvFile.readLines().size() == 3
 	</code></pre>
 						</section>
 <!-- ---------------------------------------------------------------------------- -->
@@ -158,7 +244,7 @@ assert authorX.@age == 30
 						</section>
 <!-- ---------------------------------------------------------------------------- -->
 						<section>
-								<h2>Multi tread</h2>
+								<h2>Multi thread</h2>
 								<p></p>
 								<pre><code class="groovy" data-trim>
 def list = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
