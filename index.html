@@ -24,9 +24,158 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
+<!-- ---------------------------------------------------------------------------- -->
+				<section>
+					<h1>Groovy Introduction</h1>
+					<p>A practical approach to groovy</p>
+					<p>
+				</section>
+<!-- ---------------------------------------------------------------------------- -->
+				<section>
+						<h2>Strings</h2>
+						<p></p>
+						<pre><code class="groovy" data-trim>
+def name = "Xavier"
+println "My name is $name"
+
+assert "Xavier" == "Mon nom est Xavier."[12..17]
+assert "Xavier" == "Mon nom est Xavier."[12..-2]
+
+int i = "18".toInteger()
+
+//Multiline
+def str = """
+	Lorem Ipsum is simply dummy text of the printing
+	and typesetting industry.
+	Lorem Ipsum has been the industry's
+	standard dummy text ever since the 1500s
+"""
+</code></pre>
+					</section>
+<!-- ---------------------------------------------------------------------------- -->
+					<section>
+							<h2>Constructor</h2>
+							<p></p>
+							<pre><code class="groovy" data-trim>
+class Person {
+	String name
+	int age
+}
+new Person(name:"Xavier", age:21)
+
+def map = [
+	"name":"Xavier",
+	"age":21
+]
+new Person(map)
+	</code></pre>
+					</section>
+<!-- ---------------------------------------------------------------------------- -->
+					<section>
+							<h2>Collections</h2>
+							<p></p>
+							<pre><code class="groovy" data-trim>
+assert [] instanceof ArrayList
+assert [1, 2] + [3, 4] == [1, 2, 3, 4]
+
+def names = ["Xavier", "Lenny"]
+names.each {name -> println name}
+names.each {println it}
+names.eachWithIndex { String name, int i -> println "$i:$name"}
+names.collect{name -> "Hi $name"}
+
+names.find {it.startsWith("X")}
+names.findAll {it.length() > 3}
+
+names.groupBy {it[0]}."X".size() // => 1
+def (beforeM, afterM) = names.split { it[0] < "M"}
+assert beforeM == ["Lenny"] && afterM == ["Xavier"]
+
+//create a closure and apply it on the collection
+def p = {o -> println "${new Date()}...$o"}
+names.each(p)
+
+//chain
+"xavier-lenny".split("-").collect { it.toUpperCase() }.join(";").with(p)
+	</code></pre>
+					</section>
+<!-- ---------------------------------------------------------------------------- -->
+					<section>
+							<h2>Files</h2>
+							<p></p>
+							<pre><code class="groovy" data-trim>
+//read the whole content of a file
+def body = new File("file-name.txt").text
+
+//and same for write
+new File("file-name.txt").text = "this is a file body \n second line"
+
+
+	</code></pre>
+						</section>
+<!-- ---------------------------------------------------------------------------- -->
+						<section>
+								<h2>Json (out of the box)</h2>
+								<p></p>
+								<pre><code class="groovy" data-trim>
+//Sample file for testing
+def myFile = new File("/tmp/a.json")
+myFile.text = """{"name":"Xavier", "age":29}"""
+
+//Json to Object from File or from String
+def author = new JsonSlurper().parse(myFile)
+author = new JsonSlurper().parseText(myFile.text)
+assert author instanceof Map
+
+//Edit the map
+author.age = 30
+
+//Object to Json
+myFile.text = new JsonBuilder(author).toString()
+println myFile.text
+// => {"age":30,"name":"Xavier"}
+		</code></pre>
+							</section>
+<!-- ---------------------------------------------------------------------------- -->
+							<section>
+									<h2>Xml (out of the box)</h2>
+									<p></p>
+									<pre><code class="groovy" data-trim>
+//Sample file for testing
+def myXmlFile = new File("/tmp/a.xml")
+myXmlFile.text = """<author age="29" ><name>Xavier</name></author>"""
+
+//Json to Object from File or from String
+def authorX
+authorX = new XmlSlurper().parse(myXmlFile)    //SAX
+authorX = new XmlParser().parse(myXmlFile)     //DOM
+authorX = new XmlParser().parseText(myXmlFile.text)
+assert authorX instanceof Map
+
+assert authorX.name == "Xavier"
+assert authorX.@age == 30
+			</code></pre>
+						</section>
+<!-- ---------------------------------------------------------------------------- -->
+						<section>
+								<h2>Multi tread</h2>
+								<p></p>
+								<pre><code class="groovy" data-trim>
+def list = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+withPool( 10 ) {
+  list.eachParallel { elm, idx ->
+      println "Working on elt:$elm at idx:$idx"
+  }
+  println "Fork/join and wait all tasks to finish... Done ! "
+}
+		</code></pre>
+							</section>
+<!-- ---------------------------------------------------------------------------- -->
+							<section>
+									<h2>Thank you</h2>
+							</section>
+<!-- ---------------------------------------------------------------------------- -->
+			</div><!-- end slides -->
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
@@ -35,6 +184,7 @@
 		<script>
 			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
+ 				controls: false,
 				history: true,
 
 				// More info https://github.com/hakimel/reveal.js#dependencies
@@ -46,5 +196,6 @@
 				]
 			});
 		</script>
+		<script src="http://localhost:35729/livereload.js"></script>
 	</body>
 </html>
